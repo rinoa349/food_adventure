@@ -36,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // アップロードの確認
     if ($image['name'] !== '' && $image['error'] === 0) {
         // エラーが発生すると0以外の番号が入ってくるので===0でエラーが起こっていなければということになる
-        $type = mime_content_type($image['tmp_name']);
+        $finfo = new finfo();
+        $type = $finfo->file($image['tmp_name'], FILEINFO_MIME_TYPE);
         if ($type !== 'image/png' && $type !== 'image/jpg' && $type !== 'image/jpeg') {
             $error['image'] = 'type';
         }
@@ -45,6 +46,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // $errorに何も入っていなければ移動する
     if (empty($error)) {
         $_SESSION['form'] = $form;
+
+        //画像のアップロード
+        if ($image['name'] !== '') {
+            $filename = date('YmdHis') . '_' . $image['name'];
+        if (!move_uploaded_file($image['tmp_name'], '../member_picture/' . $filename)) {
+            die('ファイルのアップロードに失敗しました。');
+        }
+        $_SESSION['form']['image'] = $filename;
+        } else {
+            $_SESSION['form']['name'] = '';
+        }
+        
         header('Location: check.php');
         exit();
     }

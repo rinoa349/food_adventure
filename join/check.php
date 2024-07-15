@@ -1,7 +1,9 @@
 <?php
 session_start();
-var_dump($_SESSION['form']);
+
+$form = $_SESSION['form']
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -23,20 +25,20 @@ var_dump($_SESSION['form']);
 		<div id="content">
 			<p>記入した内容を確認して、「登録する」ボタンをクリックしてください</p>
 			<form action="" method="post">
-				<dl>
-					<dt>ニックネーム</dt>
-					<dd>○○</dd>
-					<dt>メールアドレス</dt>
-					<dd>info@example.com</dd>
-					<dt>パスワード</dt>
-					<dd>
-						【表示されません】
-					</dd>
-					<dt>写真など</dt>
-					<dd>
-							<img src="../member_picture/" width="100" alt="" />
-					</dd>
-				</dl>
+				<ul>
+					<li>ニックネーム</li>
+						<p>○○</p>
+					<li>メールアドレス</li>
+						<p>info@example.com</p>
+					<li>パスワード</li>
+						<p>
+							【表示されません】
+						</p>
+					<li>写真など</li>
+						<p>
+								<img src="../member_picture/" width="100" alt="" />
+						</p>
+				</ul>
 				<div><a href="index.php?action=rewrite">&laquo;&nbsp;書き直す</a> | <input type="submit" value="登録する" /></div>
 			</form>
 		</div>
