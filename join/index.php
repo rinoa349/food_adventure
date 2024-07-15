@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $form = [
     'name' => '',
     'email' => '',
@@ -27,6 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error['password'] = 'blank';
     } else if (strlen($form['password']) < 4) {
         $error['password'] = 'length';
+    }
+
+    // ※画像のチェック
+    $image = $_FILES['image'];
+        // アップロードの確認
+    if ($image['name'] !== '' && $image['error'] === 0) {
+        // エラーが発生すると0以外の番号が入ってくるので===0でエラーが起こっていなければということになる
+        $type = mime_content_type($image['tmp_name']);
+        if ($type !== 'image/png' && $type !== 'image/jpg' && $type !== 'image/jpeg') {
+            $error['image'] = 'type';
+        }
+    }
+
+    // $errorに何も入っていなければ移動する
+    if (empty($error)) {
+        $_SESSION['form'] = $form;
+        header('Location: check.php');
+        exit();
     }
 }
 
@@ -80,11 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p class="error">* パスワードは4文字以上で入力してください</p>
                     <?php endif; ?>
                 </div>
-                
+
                 <li>写真など</li>
                 <div>
                     <input type="file" name="image" size="35" value=""/>
-                    <p class="error">* 写真などは「.png」または「.jpg」の画像を指定してください</p>
+                    <?php if (isset($error['image']) && $error['image'] === 'type') : ?>
+                        <p class="error">* 写真などは「.png」または「.jpg」の画像を指定してください</p>
+                    <?php endif; ?>
                     <p class="error">* 恐れ入りますが、画像を改めて指定してください</p>
                 </div>
             </ul>
