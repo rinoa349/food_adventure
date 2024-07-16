@@ -10,10 +10,6 @@ if (isset($_SESSION['form'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$db = new mysqli('localhost', 'root', 'root', 'post_food');
-	if (!$db) {
-		die($db->error);
-	}
 	$stmt = $db->prepare('insert into users (name, email, password, picture) VALUES (?, ?, ?, ?)');
 	if (!$stmt) {
 		die($db->error);
