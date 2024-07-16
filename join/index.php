@@ -1,5 +1,6 @@
 <?php
 session_start();
+require('../library.php');
 
 $form = [
     'name' => '',
@@ -7,10 +8,6 @@ $form = [
     'password' => ''
 ];
 $error = [];
-
-function h($value) {
-    return htmlspecialchars($value, ENT_QUOTES);
-}
 
 // フォームが送信された時(フォームの内容をチェック)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

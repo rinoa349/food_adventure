@@ -1,7 +1,36 @@
 <?php
 session_start();
+require('../library.php');
 
-$form = $_SESSION['form']
+if (isset($_SESSION['form'])) {
+	$form = $_SESSION['form'];
+} else {
+	header('Location: index.php');
+	exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$db = new mysqli('localhost', 'root', 'root', 'post_food');
+	if (!$db) {
+		die($db->error);
+	}
+	$stmt = $db->prepare('insert into users (name, email, password, picture) VALUES (?, ?, ?, ?)');
+	if (!$stmt) {
+		die($db->error);
+	}
+	// ※passwordのランダム設定
+	$password = password_hash($form['password'], PASSWORD_DEFAULT);
+	$stmt->bind_param('ssss', $form['name'], $form['email'], $password, $form['image']);
+	$success = $stmt->execute();
+	if (!$success) {
+		die($db->error);
+	}
+
+	// セッションデータの削除
+	unset($_SESSION['form']);
+	header('Location: thanks.php');
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -27,16 +56,16 @@ $form = $_SESSION['form']
 			<form action="" method="post">
 				<ul>
 					<li>ニックネーム</li>
-						<p>○○</p>
+						<p><?php echo h($form['name']); ?></p>
 					<li>メールアドレス</li>
-						<p>info@example.com</p>
+						<p><?php echo h($form['email']); ?></p>
 					<li>パスワード</li>
 						<p>
-							【表示されません】
+							【 表示されません 】
 						</p>
 					<li>写真など</li>
 						<p>
-								<img src="../member_picture/" width="100" alt="" />
+								<img src="../member_picture/<?php echo h($form['image']); ?>" width="100" alt="" />
 						</p>
 				</ul>
 				<div><a href="index.php?action=rewrite">&laquo;&nbsp;書き直す</a> | <input type="submit" value="登録する" /></div>
