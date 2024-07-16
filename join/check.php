@@ -10,6 +10,7 @@ if (isset($_SESSION['form'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$db = dbconnect();
 	$stmt = $db->prepare('insert into users (name, email, password, picture) VALUES (?, ?, ?, ?)');
 	if (!$stmt) {
 		die($db->error);

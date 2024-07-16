@@ -24,6 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form['email'] = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     if ($form['email'] === '') {
         $error['email'] = 'blank';
+        // アドレスの重複確認
+    } else {
+        $db = dbconnect();
+        $stmt = $db->prepare('select count(*) from users where email=?');
+        if(!$stmt) {
+            die($db->error);
+        }
+        $stmt->bind_param('s', $form['email']);
+        $stmt->bind_result($cnt);
+        $success = $stmt->execute();
+        if (!$success) {
+            die($db->error);
+        }
+        $stmt->bind_result($cnt);
+        $stmt->fetch();
+        if ($cnt > 0) {
+            $error['email'] = 'duplicate';
+        }
     }
 
     $form['password'] = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
@@ -102,7 +120,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php if (isset($error['email']) && $error['email'] === 'blank') : ?>
                         <p class="error">* メールアドレスを入力してください</p>
                     <?php endif; ?>
-                    <p class="error">* 指定されたメールアドレスはすでに登録されています</p>
+                    <?php if (isset($error['email']) && $error['email'] === 'duplicate') : ?>
+                        <p class="error">* 指定されたメールアドレスはすでに登録されています</p>
+                    <?php endif; ?>
                 </div>
                 
                 <li>パスワード<span class="required">必須</span></li>

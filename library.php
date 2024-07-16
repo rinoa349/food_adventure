@@ -10,5 +10,9 @@ function dbconnect() {
   if (!$db) {
 		die($db->error);
 	}
+
+  return $db;
+  // $db = dbconnect();
+  // DB接続コピー用
 }
 ?>
